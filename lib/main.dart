@@ -12,25 +12,47 @@ class MyApp extends StatelessWidget {
         appBar: AppBar(
           title: Text('State Demo'),
         ),
-        body: TapBoxA(),
+        body: ParentWidget(),
       ),
     );
   }
 }
 
-class TapBoxA extends StatefulWidget {
+class ParentWidget extends StatefulWidget {
   @override
-  _TapBoxAState createState() => _TapBoxAState();
+  _ParentWidgetState createState() => _ParentWidgetState();
 }
 
-class _TapBoxAState extends State<TapBoxA> {
+class _ParentWidgetState extends State<ParentWidget> {
+  
+  bool _active = false;
 
-  bool _active = true;
-
-  _handleTap(){
+  void _handleTapboxChanged(bool newValue) {
     setState(() {
-      _active =!_active;
+      _active = newValue;
     });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: TapBoxB(
+        active:_active,
+        onChanged: _handleTapboxChanged,
+      ),
+    );
+  }
+}
+
+class TapBoxB extends StatelessWidget {
+
+  TapBoxB({Key key, this.active: false, @required this.onChanged}): super(key: key);
+
+  final bool active;
+  final ValueChanged<bool> onChanged;
+
+  void _handleTap() {
+    onChanged(!active);
   }
 
   @override
@@ -41,21 +63,17 @@ class _TapBoxAState extends State<TapBoxA> {
         child: Container(
           child: Center(
             child: Text(
-              _active ? 'Active' : 'Inactive',
-              style: TextStyle(
-                color: Colors.black54,
-                fontSize: 32.0,
-              ),
+              active ? 'Active' : 'Inactive',
+              style: TextStyle(fontSize: 32.0, color: Colors.white),
             ),
-          ),
-          decoration: BoxDecoration(
-            color: _active ? Colors.green[700] : Colors.grey[700]
           ),
           width: 200.0,
           height: 200.0,
+          decoration: BoxDecoration(
+            color: active ? Colors.lightGreen[700] : Colors.grey[600],
+          ),
         ),
       ),
     );
   }
 }
-
